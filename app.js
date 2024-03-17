@@ -6,13 +6,10 @@ const cluster = require(`node:cluster`)
 const totalCPUs = require("os").cpus().length
 const port = 8082
 
-const ServerSessionLog = {}
-
-const axios = require("axios")
-
 if (cluster.isPrimary) {
     //Predatabase operations...
     (async () => {
+        console.log(`Nodejs Engine: Ready...`)
         const redisClient = redis.createClient({
             socket: {
                 host: "127.0.0.1",
@@ -23,7 +20,7 @@ if (cluster.isPrimary) {
         })
         redisClient.on("error", (error) => console.error(`Error : ${error}`))
         await redisClient.connect()
-        console.log(`Redis is Connected to NodeJS.`)
+        console.log(`Redis Database Memory: Ready...`)
     })().catch(err => {
         console.error(err);
     })
@@ -65,5 +62,5 @@ if (cluster.isPrimary) {
     }
     app.ws('/api/chat_universe', wsHandler)
     app.use(express.static('build'))
-    app.listen(port, () => console.log(`WSChat Server: a thread is listening on PORT ${port}`))
+    app.listen(port, () => console.log(`WebsSocket Chat Server: a thread is listening on PORT ${port}`))
 }
