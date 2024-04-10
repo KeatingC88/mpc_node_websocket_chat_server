@@ -1,0 +1,20 @@
+# Start redisdb docker for nodejs wschat to use as it's database container. Assuming the Cmd prompt is in the correct folder.
+docker compose -f mpc_redis_wschat_db-container.yaml up -d
+
+# After loading docker container and navigating to the folder in cmd prompt. To List Containers Cmd:
+Docker PS
+
+#Connect to Docker Image Cmd:
+docker exec -it 39a857dc93d01a19891429d9b7f9f0c4ce40adebd90a53f16c35e2f004228da4 bash
+
+How to launch redis-cli 
+redis-cli
+
+Ping Redis
+ping
+
+How Data is Stored in this instance...
+rpush "{userA} {userB}" "{TS}" "..."
+
+How Data is Called by redis...
+lrange {key} {start} {end}
