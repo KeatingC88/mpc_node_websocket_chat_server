@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   redis:
-    image: mpc_redis_websocket_chat_db_rom
+    image: redis:latest
     container_name: mpc_redis_websocket_chat_db
     command: redis-server
     ports:

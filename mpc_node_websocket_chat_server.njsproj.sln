@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "MPC_NodeWSChat_Server", "MPC_NodeWSChat_Server.njsproj", "{D298A2F0-B856-429D-B507-41C5A4D0F6A6}"
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "mpc_node_websocket_chat_server", "mpc_node_websocket_chat_server.njsproj", "{D298A2F0-B856-429D-B507-41C5A4D0F6A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

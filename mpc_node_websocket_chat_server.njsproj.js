@@ -4,11 +4,11 @@ const expressWs = require('express-ws')
 const redis = require('redis')
 const cluster = require(`node:cluster`)
 const totalCPUs = require("os").cpus().length
-const port = 8082
+const port = 3002
 
 if (cluster.isPrimary) {
     (async () => {
-        console.log(`Nodejs Engine: Connecting to Redis Database Container by Docker...`)
+        console.log(`NodeJS Primary Cluster: Connecting to Redis Database Container by Docker...`)
         const redisClient = redis.createClient({
             socket: {
                 host: "127.0.0.1",
@@ -19,13 +19,12 @@ if (cluster.isPrimary) {
         })
 
         redisClient.on("error", (error) => {
-            console.error(`Redis:\n${error}\nCheck Redis database hostname in this script or docker container with the database address.`)
+            console.error(`Redis:${error}\nCheck Redis database hostname in this script or docker container with the database address.`)
         })
 
         await redisClient.connect()
         console.log(`Redis Database Memory: Ready...`)
     })().catch(err => {
-        console.error(`How does this Trigger? In Here -- Check Script.`)
         console.error(err)
     })
 
@@ -37,7 +36,7 @@ if (cluster.isPrimary) {
         cluster.fork()
     })
 } else {
-    //Start The Chat Universe with Redis Database.
+    //Start The Chat Universe and store into Redis Database.
     const app = express()
     expressWs(app)
     const connections = new Set()
@@ -54,9 +53,10 @@ if (cluster.isPrimary) {
                     password: ""
                 }
             })//Credentials for the Database...
-            await redisClient.on("error", (error) => console.error(`Error : ${error}`))//If there is a problem w/ the database connection...
+            await redisClient.on("error", (error) => console.error(`${error}`))//If there is a problem w/ the database connection...
             await redisClient.connect()//Establish Connection to the Database...
-            await redisClient.rPush(`${obj.id}|${obj.send_to}|${Date.now()}`, [`${obj.id}`, `${obj.send_to}`, `${obj.message}`, `${obj.timestamp}`, `${obj.display_name}`,`${obj.online_status}`,`${obj.avatar_title}`,`${obj.avatar_url_path}`])//Save a record to Redis Database.
+            await redisClient.rPush(`${obj.id}|${obj.send_to}|${obj.timestamp}`, [`${obj.id}`, `${obj.send_to}`, `${obj.message}`, `${obj.timestamp}`, `${obj.display_name}`, `${obj.online_status}`, `${obj.avatar_title}`, `${obj.avatar_url_path}`])//Save a record to Redis Database.
+            //console.log([`${obj.id}`, `${obj.send_to}`, `${obj.message}`, `${obj.timestamp}`, `${obj.display_name}`, `${obj.online_status}`, `${obj.avatar_title}`, `${obj.avatar_url_path}`])
             await connections.forEach((conn) => conn.send(message_string))//Broadcast Message to Listeners...
         })
 
@@ -66,7 +66,7 @@ if (cluster.isPrimary) {
     }
     app.ws('/api/chat_universe', wsHandler)//Make the Connection with the credential properties and methods.
     app.use(express.static('build'))
-    app.listen(port, () => console.log(`WebsSocket Chat Server: a thread is listening on PORT ${port}`))//Enable NodeJS to start listening like a server would do per thread.
+    app.listen(port, () => console.log(`WebSocket Chat Server: a CPU CORE is listening on PORT ${port}`))//Enable NodeJS to start listening like a server would do per thread.
     app.use(express.json())
     app.use((req, res, next) => {
         res.header("Access-Control-Allow-Origin", "*")
@@ -87,8 +87,8 @@ if (cluster.isPrimary) {
         await redisClients.on("error", (error) => console.error(`Error : ${error}`))
         await redisClients.connect()
         //Query Redis for User A and User B converation.
-        let from = await redisClients.keys(`${req.params.from}|${req.params.sent_to}|*`, null)
-        let sent_to = await redisClients.keys(`${req.params.sent_to}|${req.params.from}|*`, null)    
+        let from = await redisClients.keys(`${req.params.from}|${req.params.sent_to}|*`, null)//is there a better way -- it causes more code on the client to process the conversation?
+        let sent_to = await redisClients.keys(`${req.params.sent_to}|${req.params.from}|*`, null)
         let from_data = {}
         let sent_to_data = {}
         //Query Redis for Message Data from User A.

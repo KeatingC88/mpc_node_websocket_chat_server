@@ -2,7 +2,7 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <Name>MPC_NodeWSChat_Server</Name>
+    <Name>mpc_node_websocket_chat_server</Name>
     <RootNamespace>MPC_NodeWSChat_Server</RootNamespace>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -10,8 +10,9 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d298a2f0-b856-429d-b507-41c5a4d0f6a6</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
-    <StartupFile>app.js</StartupFile>
+    <ProjectHome>
+    </ProjectHome>
+    <StartupFile>mpc_node_websocket_chat_server.njsproj.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -28,10 +29,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="app.js" />
+    <Content Include="mpc_node_websocket_chat_server.njsproj.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Content Include="RedBlackTree.js" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
 </Project>
