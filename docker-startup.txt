@@ -1,2 +1,12 @@
+#Docker Desktop Instructions
 docker build -t mpc_node_websocket_chat_server_rom .
 docker run -d -p 3002:3002 --name mpc_node_websocket_chat_server mpc_node_websocket_chat_server_rom
+
+# Build the Node.js Docker image
+docker build -t mpc_node_websocket_chat_server_rom .
+
+# Create a custom Docker network (if not already created)
+docker network create app-network
+
+# Run the Node.js container on the same network as Redis
+docker run -d --name mpc_node_websocket_chat_server --network app-network -e REDIS_HOST=mpc_redis_websocket_chat_database -e REDIS_PORT=6379 mpc_node_websocket_chat_server_rom

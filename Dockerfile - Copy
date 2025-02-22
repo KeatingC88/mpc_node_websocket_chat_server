@@ -2,7 +2,7 @@
 FROM node:18
 
 # Set the working directory inside the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy package.json and package-lock.json (or yarn.lock) to the working directory
 COPY package*.json ./
@@ -15,8 +15,8 @@ RUN npm install
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 3002
+EXPOSE 80
 
 # Define the command to run the app
-CMD ["npm", "start"]
+CMD ["node", "mpc_node_websocket_chat_server.js"]
 

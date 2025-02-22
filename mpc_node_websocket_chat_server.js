@@ -9,6 +9,8 @@ const redis = require('redis')
 const cluster = require(`node:cluster`)
 
 let server_network_ip_address = `auto`
+//let server_network_ip_address = `127.0.0.1`
+//let server_network_ip_address = `mpc_node_websocket_chat_database`
 const server_network_socket_port = process.env.SERVER_NETWORK_SOCKET_PORT
 
 const local_ip_address = () => {
@@ -25,18 +27,18 @@ const local_ip_address = () => {
     return null
 }
 
-
 try {
-
     if (server_network_ip_address === `auto`)
         server_network_ip_address = `${local_ip_address()}`
 
     if (cluster.isPrimary) {
         (async () => {
-            console.log(`NodeJS Primary Cluster: Connecting to Redis Database Container by Docker...`)
+            console.log(`Nodejs Primary Cluster: Connecting to Redis Database Container by Docker...`)
+
             const redisClient = redis.createClient({
                 socket: {
                     host: server_network_ip_address,
+                    //host: process.env.DOCKER_CONTAINER_NAME,
                     port: process.env.DOCKER_CONTAINER_PORT,
                     username: process.env.REDIS_USER_NAME,
                     password: process.env.REDIS_USER_PASSWORD
@@ -44,11 +46,11 @@ try {
             })
 
             redisClient.on("error", (error) => {
-                console.error(`Redis:${error}\nCheck Redis database hostname in this script or docker container with the database address.`)
+                console.error(`Redis: ${error}`)
             })
 
             await redisClient.connect()
-            console.log(`Redis Database Memory: Ready...`)
+            console.log(`Redis: Database Memory Ready...`)
 
         })().catch(err => {
             console.error(err)
@@ -77,6 +79,7 @@ try {
                 const redisClient = await redis.createClient({
                     socket: {
                         host: server_network_ip_address,
+                        //host: process.env.DOCKER_CONTAINER_NAME,
                         port: process.env.DOCKER_CONTAINER_PORT,
                         username: process.env.REDIS_USER_NAME,
                         password: process.env.REDIS_USER_PASSWORD
@@ -100,7 +103,7 @@ try {
 
         app.use(express.static('build'))
 
-        app.listen(server_network_socket_port, server_network_ip_address, () => console.log(`Node Mailer Server:\na CPU Core is listening on \nNetwork IP Address ${network_ip_address} \nNetwork Socket Port ${network_socket_port}`))
+        app.listen(server_network_socket_port, server_network_ip_address, () => console.log(`Node Websocket Chat Server:\na CPU Core is listening on \nNetwork IP Address ${server_network_ip_address}`))
 
         app.use(express.json())
         app.use((req, res, next) => {
@@ -114,6 +117,7 @@ try {
             const redisClients = redis.createClient({
                 socket: {
                     host: server_network_ip_address,
+                    //host: process.env.DOCKER_CONTAINER_NAME,
                     port: process.env.DOCKER_CONTAINER_PORT,
                     username: process.env.REDIS_USER_NAME,
                     password: process.env.REDIS_USER_PASSWORD
