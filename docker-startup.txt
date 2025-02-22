@@ -1,0 +1,2 @@
+docker build -t mpc_node_websocket_chat_server_rom .
+docker run -d -p 3002:3002 --name mpc_node_websocket_chat_server mpc_node_websocket_chat_server_rom

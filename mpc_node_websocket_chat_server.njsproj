@@ -12,7 +12,7 @@
     <ProjectGuid>d298a2f0-b856-429d-b507-41c5a4d0f6a6</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>mpc_node_websocket_chat_server.njsproj.js</StartupFile>
+    <StartupFile>mpc_node_websocket_chat_server.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -29,7 +29,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="mpc_node_websocket_chat_server.njsproj.js" />
+    <Content Include="mpc_node_websocket_chat_server.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>
