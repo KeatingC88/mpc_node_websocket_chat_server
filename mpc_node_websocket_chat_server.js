@@ -76,6 +76,7 @@ try {
             ws.on('message', async (message_string) => {
 
                 let obj = await JSON.parse(message_string)
+
                 const redisClient = await redis.createClient({
                     socket: {
                         host: server_network_ip_address,
@@ -89,8 +90,8 @@ try {
 
                 await redisClient.connect()
 
-                await redisClient.rPush(`${obj.id}|${obj.send_to}|${obj.timestamp}`, [`${obj.id}`, `${obj.send_to}`, `${obj.message}`, `${obj.timestamp}`, `${obj.display_name}`, `${obj.online_status}`, `${obj.avatar_title}`, `${obj.avatar_url_path}`])
-                //console.log([`${obj.id}`, `${obj.send_to}`, `${obj.message}`, `${obj.timestamp}`, `${obj.display_name}`, `${obj.online_status}`, `${obj.avatar_title}`, `${obj.avatar_url_path}`])
+                await redisClient.rPush(`${obj.id}|${obj.send_to}|${obj.timestamp}`, [`${obj.id}`, `${obj.send_to}`, `${obj.message}`, `${obj.timestamp}`, `${obj.name}`, `${obj.online_status}`, `${obj.avatar_title}`, `${obj.avatar_url_path}`, `${obj.language}`, `${obj.region}`])
+
                 await connections.forEach((conn) => conn.send(message_string))
             })
 
@@ -103,9 +104,10 @@ try {
 
         app.use(express.static('build'))
 
-        app.listen(server_network_socket_port, server_network_ip_address, () => console.log(`Node Websocket Chat Server:\na CPU Core is listening on \nNetwork IP Address ${server_network_ip_address}`))
+        app.listen(server_network_socket_port, server_network_ip_address, () => console.log(`Node Websocket Chat Server:\na CPU Core is listening on \nNetwork IP Address ${server_network_ip_address}:${server_network_socket_port}`))
 
         app.use(express.json())
+
         app.use((req, res, next) => {
             res.header("Access-Control-Allow-Origin", "*")
             res.header("Access-Control-Allow-Methods", "GET")
