@@ -4,7 +4,6 @@ const os = require("os")
 const total_cpus = os.cpus().length
 const express = require(`express`)
 const express_ws = require('express-ws')
-const cors = require('cors')
 const redis = require('redis')
 const cluster = require(`node:cluster`)
 
@@ -28,6 +27,7 @@ const local_ip_address = () => {
 }
 
 try {
+
     if (server_network_ip_address === `auto`)
         server_network_ip_address = `${local_ip_address()}`
 
