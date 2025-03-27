@@ -365,8 +365,6 @@ FodyWeavers.xsd
 # Secret Files
 .env
 .env.txt
-Dockerfile
-Dockerfile.txt
 docker-startup-cmds-cli.txt
 *.sln
 *.njsproj

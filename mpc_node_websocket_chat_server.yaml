@@ -3,13 +3,13 @@ version: '3.8'
 services:
   mpc_node_websocket_chat_server:
     build: .
-    image: mpc_node_websocket_chat_server_rom
-    container_name: mpc_node_websocket_chat_server
+    image: ${DOCKER_CONTAINER_IMAGE_NAME}
+    container_name: ${DOCKER_CONTAINER_NAME}
     restart: always
     ports:
       - "${SERVER_NETWORK_SOCKET_PORT}:${SERVER_NETWORK_SOCKET_PORT}"
     environment:
-      REDIS_HOST: mpc_redis_websocket_chat_database
+      REDIS_HOST: ${REDIS_HOST_NAME}
       REDIS_PORT: ${DOCKER_CONTAINER_PORT}
     networks:
       - app-network
