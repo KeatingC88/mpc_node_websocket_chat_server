@@ -1,16 +1,15 @@
-MPC Node.js WebSocket Chat Server
-A lightweight WebSocket chat server powered by Redis, designed to run inside a Docker container. This server dynamically selects the first available Ethernet protocol and relies on environment variables for secure configuration.
+Node.js WebSocket Chat Server
 
 Environment Variables (.env)
 Create a .env file in the root directory and define the following variables:
 
-# Server Configuration
+# === [Server Configuration] ===
 SERVER_NETWORK_SOCKET_PORT=
 
 # Chat Universe Settings
 CHAT_UNIVERSE_NAME=
 
-# Docker Configuration
+# === [Docker Configuration] ===
 # Docker's Container Name Display
 DOCKER_CONTAINER_NAME=
 # Docker's Container Port
@@ -18,7 +17,7 @@ DOCKER_CONTAINER_PORT=
 # Docker's Container Image Name Display
 DOCKER_CONTAINER_IMAGE_NAME=
 
-# Redis Credentials
+# === [Redis Credentials] ===
 # Username for Redis Database
 REDIS_USER_NAME=
 # Password for Redis Database
