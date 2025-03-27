@@ -9,7 +9,6 @@ const cluster = require(`node:cluster`)
 
 let server_network_ip_address = `auto`
 //let server_network_ip_address = `127.0.0.1`
-//let server_network_ip_address = `container-name`
 const server_network_socket_port = process.env.SERVER_NETWORK_SOCKET_PORT
 
 const get_hardware_ethernet_local_ip_address = () => {
@@ -40,7 +39,7 @@ try {
             const redis_connection_test = redis.createClient({
                 socket: {
                     host: server_network_ip_address,
-                    port: process.env.DOCKER_CONTAINER_PORT,
+                    port: process.env.REDIS_PORT,
                     username: process.env.REDIS_USER_NAME,
                     password: process.env.REDIS_USER_PASSWORD
                 }
@@ -83,7 +82,7 @@ try {
                 const saving_message_to_redis = await redis.createClient({
                     socket: {
                         host: server_network_ip_address,
-                        port: process.env.DOCKER_CONTAINER_PORT,
+                        port: process.env.REDIS_PORT,
                         username: process.env.REDIS_USER_NAME,
                         password: process.env.REDIS_USER_PASSWORD
                     }
@@ -126,7 +125,7 @@ try {
             const redis_client = redis.createClient({
                 socket: {
                     host: server_network_ip_address,
-                    port: process.env.DOCKER_CONTAINER_PORT,
+                    port: process.env.REDIS_PORT,
                     username: process.env.REDIS_USER_NAME,
                     password: process.env.REDIS_USER_PASSWORD
                 }
@@ -170,5 +169,5 @@ try {
     }
 
 } catch (err) {
-    console.error('Error:', err)
+    console.error('Server Error:', err)
 }
