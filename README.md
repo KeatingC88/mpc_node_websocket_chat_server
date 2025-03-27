@@ -11,15 +11,19 @@ SERVER_NETWORK_SOCKET_PORT=
 CHAT_UNIVERSE_NAME=
 
 # Docker Configuration
+# Docker's Container Name Display
 DOCKER_CONTAINER_NAME=
+# Docker's Container Port
 DOCKER_CONTAINER_PORT=
+# Docker's Container Image Name Display
 DOCKER_CONTAINER_IMAGE_NAME=
 
 # Redis Credentials
 REDIS_USER_NAME=
 REDIS_USER_PASSWORD=
 REDIS_HOST_NAME=
-Running with Docker
+
+#Running with Docker
 
 To start the server inside a Docker container, use:
 
@@ -27,11 +31,11 @@ docker compose -f mpc_node_websocket_chat_server.yaml up -d
 
 This will automatically set up Redis and the WebSocket chat server.
 
-Running Without Docker
+#Running Without Docker
 If you prefer to run the server manually, navigate to the project root directory and execute:
 node mpc_node_websocket_chat_server.js
 
-Features
+#Features
 WebSocket-powered real-time chat communication
 
 Secure Redis authentication using .env secrets
