@@ -361,6 +361,16 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Secret Files
 .env
 .env.txt
+Dockerfile
+dockerfile.txt
+docker-startup-cmds-cli.txt
 /.env
+/docker-startup-cmds-cli.txt
+/.env.txt
+/Dockerfile
+/dockerfile.txt
+/Dockerfile.txt
