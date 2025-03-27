@@ -366,11 +366,10 @@ FodyWeavers.xsd
 .env
 .env.txt
 Dockerfile
-dockerfile.txt
+Dockerfile.txt
 docker-startup-cmds-cli.txt
 /.env
 /docker-startup-cmds-cli.txt
 /.env.txt
 /Dockerfile
-/dockerfile.txt
 /Dockerfile.txt

@@ -9,10 +9,10 @@ const cluster = require(`node:cluster`)
 
 let server_network_ip_address = `auto`
 //let server_network_ip_address = `127.0.0.1`
-//let server_network_ip_address = `mpc_node_websocket_chat_database`
+//let server_network_ip_address = `container-name`
 const server_network_socket_port = process.env.SERVER_NETWORK_SOCKET_PORT
 
-const local_ip_address = () => {
+const get_hardware_ethernet_local_ip_address = () => {
     const networkInterfaces = os.networkInterfaces()
     for (const interfaceName in networkInterfaces) {
         if (interfaceName.toLowerCase().includes('eth') || interfaceName.toLowerCase() === 'ethernet') {
@@ -29,27 +29,28 @@ const local_ip_address = () => {
 try {
 
     if (server_network_ip_address === `auto`)
-        server_network_ip_address = `${local_ip_address()}`
+        server_network_ip_address = `${get_hardware_ethernet_local_ip_address()}`
 
     if (cluster.isPrimary) {
-        (async () => {
-            console.log(`Nodejs Primary Cluster: Connecting to Redis Database Container by Docker...`)
 
-            const redisClient = redis.createClient({
+        (async () => {
+
+            console.log(`NodeJS Primary Cluster: Connecting to Redis Database Docker Container...`)
+
+            const redis_connection_test = redis.createClient({
                 socket: {
                     host: server_network_ip_address,
-                    //host: process.env.DOCKER_CONTAINER_NAME,
                     port: process.env.DOCKER_CONTAINER_PORT,
                     username: process.env.REDIS_USER_NAME,
                     password: process.env.REDIS_USER_PASSWORD
                 }
             })
 
-            redisClient.on("error", (error) => {
-                console.error(`Redis: ${error}`)
+            redis_connection_test.on("error", (error) => {
+                console.error(`Redis Error: ${error}`)
             })
 
-            await redisClient.connect()
+            await redis_connection_test.connect()
             console.log(`Redis: Database Memory Ready...`)
 
         })().catch(err => {
@@ -63,34 +64,35 @@ try {
         cluster.on('exit', (worker, code, signal) => {
             cluster.fork()
         })
+
     } else {
 
         const app = express()
+
         express_ws(app)
 
         const connections = new Set()
+
         const wsHandler = (ws) => {
 
             connections.add(ws)
 
             ws.on('message', async (message_string) => {
-
                 let obj = await JSON.parse(message_string)
 
-                const redisClient = await redis.createClient({
+                const saving_message_to_redis = await redis.createClient({
                     socket: {
                         host: server_network_ip_address,
-                        //host: process.env.DOCKER_CONTAINER_NAME,
                         port: process.env.DOCKER_CONTAINER_PORT,
                         username: process.env.REDIS_USER_NAME,
                         password: process.env.REDIS_USER_PASSWORD
                     }
                 })
-                await redisClient.on("error", (error) => console.error(`${error}`))
+                await saving_message_to_redis.on("error", (error) => console.error(`${error}`))
 
-                await redisClient.connect()
+                await saving_message_to_redis.connect()
 
-                await redisClient.rPush(`${obj.id}|${obj.send_to}|${obj.timestamp}`, [`${obj.id}`, `${obj.send_to}`, `${obj.message}`, `${obj.timestamp}`, `${obj.name}`, `${obj.online_status}`, `${obj.avatar_title}`, `${obj.avatar_url_path}`, `${obj.language}`, `${obj.region}`])
+                await saving_message_to_redis.rPush(`${obj.id}|${obj.send_to}|${obj.timestamp}`, [`${obj.id}`, `${obj.send_to}`, `${obj.message}`, `${obj.timestamp}`, `${obj.name}`, `${obj.online_status}`, `${obj.avatar_title}`, `${obj.avatar_url_path}`, `${obj.language}`, `${obj.region}`])
 
                 await connections.forEach((conn) => conn.send(message_string))
             })
@@ -100,11 +102,13 @@ try {
             })
         }
 
-        app.ws('/api/chat_universe', wsHandler)
+        //Set a common chat name for all end users to send and receive messages when using this server's TCP connection
+        app.ws(`/api/${process.env.CHAT_UNIVERSE_NAME}`, wsHandler)
 
         app.use(express.static('build'))
 
-        app.listen(server_network_socket_port, server_network_ip_address, () => console.log(`Node Websocket Chat Server:\na CPU Core is listening on \nNetwork IP Address ${server_network_ip_address}:${server_network_socket_port}`))
+        //Server is listening on this HTTP/s Address.
+        app.listen(server_network_socket_port, server_network_ip_address, () => console.log(`Chat Server:\na CPU Core is listening on \nNetwork IP Address ${server_network_ip_address}:${server_network_socket_port}`))
 
         app.use(express.json())
 
@@ -115,42 +119,56 @@ try {
             next()
         })
 
+        //Request Direct Message Conversation End User and Participant
         app.get('/api/:from/:sent_to', async (req, res) => {
-            const redisClients = redis.createClient({
+
+            //Configure Redis Client
+            const redis_client = redis.createClient({
                 socket: {
                     host: server_network_ip_address,
-                    //host: process.env.DOCKER_CONTAINER_NAME,
                     port: process.env.DOCKER_CONTAINER_PORT,
                     username: process.env.REDIS_USER_NAME,
                     password: process.env.REDIS_USER_PASSWORD
                 }
             })
-            await redisClients.on("error", (error) => console.error(`Error : ${error}`))
-            await redisClients.connect()
 
-            //Query Redis for User A and User B converation.
-            let from = await redisClients.keys(`${req.params.from}|${req.params.sent_to}|*`, null)
-            let sent_to = await redisClients.keys(`${req.params.sent_to}|${req.params.from}|*`, null)
+            //Catch any errors
+            await redis_client.on("error", (error) => console.error(`Error : ${error}`))
+
+            //Connect to Redis
+            await redis_client.connect()
+
+            //Query Redis for the End User Conversation with a Participant
+            let from = await redis_client.keys(`${req.params.from}|${req.params.sent_to}|*`, null)
+            let sent_to = await redis_client.keys(`${req.params.sent_to}|${req.params.from}|*`, null)
+
+            //Storage for the messages in the database
             let from_data = {}
             let sent_to_data = {}
 
-            //Query Redis for Message Data from User A.
+            //Query Redis Database for Messages from End User
             for (let index in from.sort()) {
-                from_data[`${from[index]}`] = await redisClients.lRange(`${from[index]}`, 0, -1, null)
+                from_data[`${from[index]}`] = await redis_client.lRange(`${from[index]}`, 0, -1, null)
             }
 
-            //Query Redis for Message Data from User B.
+            //Query Redis Database for Messages from Participant
             for (let index in sent_to.sort()) {
-                sent_to_data[`${sent_to[index]}`] = await redisClients.lRange(`${sent_to[index]}`, 0, -1, null)
+                sent_to_data[`${sent_to[index]}`] = await redis_client.lRange(`${sent_to[index]}`, 0, -1, null)
             }
 
-            //Send Redis Data from User A and User B to the Client that is requesting the conversation.
+            //Respond by Sending The Requested Information back to the client in JSON
             res.send(JSON.stringify({
                 from: from_data,
                 sent_to: sent_to_data
             }))
+
+            //Disconnect from Redis gracefully
+            await redis_client.quit()
+
         })
+
     }
+
 } catch (err) {
     console.error('Error:', err)
 }
