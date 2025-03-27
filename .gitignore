@@ -368,8 +368,6 @@ FodyWeavers.xsd
 Dockerfile
 Dockerfile.txt
 docker-startup-cmds-cli.txt
-/.env
-/docker-startup-cmds-cli.txt
-/.env.txt
-/Dockerfile
-/Dockerfile.txt
+*.sln
+*.njsproj
+*.jsproj.sln
