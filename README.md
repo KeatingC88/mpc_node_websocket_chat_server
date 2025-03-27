@@ -32,7 +32,7 @@ To start the server inside a Docker container, use:
 
 docker compose -f mpc_node_websocket_chat_server.yaml up -d
 
-This will automatically set up Redis and the WebSocket chat server.
+This will automatically set up the WebSocket chat server with some Redis Database of your choosing.
 
 # Running Without Docker
 If you prefer to run the server manually, navigate to the project root directory and execute:
