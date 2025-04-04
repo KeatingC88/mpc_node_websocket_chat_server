@@ -12,6 +12,7 @@ let server_network_ip_address = `auto`
 const server_network_socket_port = process.env.SERVER_NETWORK_SOCKET_PORT
 
 const get_hardware_ethernet_local_ip_address = () => {
+
     const networkInterfaces = os.networkInterfaces()
     for (const interfaceName in networkInterfaces) {
         if (interfaceName.toLowerCase().includes('eth') || interfaceName.toLowerCase() === 'ethernet') {
@@ -23,6 +24,7 @@ const get_hardware_ethernet_local_ip_address = () => {
         }
     }
     return null
+
 }
 
 try {
@@ -35,6 +37,10 @@ try {
         (async () => {
 
             console.log(`NodeJS Primary Cluster: Connecting to Redis Database Docker Container...`)
+
+            console.log(server_network_ip_address)
+
+            console.log(process.env.REDIS_PORT)
 
             const redis_connection_test = redis.createClient({
                 socket: {
@@ -120,7 +126,6 @@ try {
 
         //Request Direct Message Conversation End User and Participant
         app.get('/api/:from/:sent_to', async (req, res) => {
-
             //Configure Redis Client
             const redis_client = redis.createClient({
                 socket: {
@@ -165,7 +170,6 @@ try {
             await redis_client.quit()
 
         })
-
     }
 
 } catch (err) {
