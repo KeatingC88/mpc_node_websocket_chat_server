@@ -34,34 +34,6 @@ try {
 
     if (cluster.isPrimary) {
 
-        (async () => {
-
-            console.log(`NodeJS Primary Cluster: Connecting to Redis Database Docker Container...`)
-
-            console.log(server_network_ip_address)
-
-            console.log(process.env.REDIS_PORT)
-
-            const redis_connection_test = redis.createClient({
-                socket: {
-                    host: server_network_ip_address,
-                    port: process.env.REDIS_PORT,
-                    username: process.env.REDIS_USER_NAME,
-                    password: process.env.REDIS_USER_PASSWORD
-                }
-            })
-
-            redis_connection_test.on("error", (error) => {
-                console.error(`Redis Error: ${error}`)
-            })
-
-            await redis_connection_test.connect()
-            console.log(`Redis: Database Memory Ready...`)
-
-        })().catch(err => {
-            console.error(err)
-        })
-
         for (let i = 0; i < total_cpus; i++) {
             cluster.fork()
         }
